@@ -12,20 +12,21 @@
     <style>
         :root {
             --primary: #007AFF; 
-            --primary-hover: #0056b3;
             --accent: #d71920; 
             --success: #34C759; 
             --warning: #FFCC00; 
+            
+            /* Light Mode */
             --bg-main: #F2F2F7; 
             --bg-card: #ffffff;
             --text-dark: #000000;
             --text-light: #8E8E93;
             --border: rgba(0, 0, 0, 0.1);
             --shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            --radius: 16px;
             --header-bg: rgba(242, 242, 247, 0.85);
             --bar-bg: rgba(255, 255, 255, 0.85);
             --input-fill: #ffffff;
+            
             --safe-top: env(safe-area-inset-top);
             --safe-bottom: env(safe-area-inset-bottom);
         }
@@ -45,83 +46,115 @@
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         html, body {
-            height: 100%; width: 100%; margin: 0; padding: 0;
-            overflow: hidden; background-color: var(--bg-main);
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: var(--bg-main); /* Fixes the gap at the bottom */
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
             color: var(--text-dark);
         }
 
         .container {
-            width: 100%; height: 100%; display: flex; flex-direction: column;
-            position: relative; overflow: hidden;
-            padding-bottom: var(--safe-bottom); /* Fix for home indicator space */
+            width: 100%;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: var(--bg-main);
         }
 
-        .app-view { display: none; flex-direction: column; height: 100%; animation: fade 0.3s ease; }
+        /* VIEW TRANSITIONS */
+        .app-view { display: none; flex-direction: column; height: 100%; overflow: hidden; animation: fadeAppIn 0.3s ease-out; }
         .app-view.visible-app { display: flex; }
-        @keyframes fade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeAppIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
         /* DASHBOARD */
-        .dashboard-header { padding: calc(var(--safe-top, 0px) + 30px) 25px 10px; }
-        .dashboard-header h1 { margin: 0; font-size: 2.2em; font-weight: 800; letter-spacing: -0.5px; }
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 25px; }
-        .app-icon { display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; }
+        .dashboard-header { padding: calc(var(--safe-top, 0px) + 30px) 25px 15px; }
+        .dashboard-header h1 { margin: 0; font-size: 2.2em; font-weight: 800; letter-spacing: -1px; }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px 25px; }
+        .app-icon { display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; }
         .app-icon:active { transform: scale(0.92); }
-        .icon-bg { width: 85px; height: 85px; border-radius: 22px; display: flex; justify-content: center; align-items: center; font-size: 40px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
-        .icon-bg.medical { background: linear-gradient(135deg, #ff5e5e, #d71920); }
-        .icon-bg.cocktail { background: linear-gradient(135deg, #ffaa00, #ff5e00); }
-        .app-icon span { font-size: 0.9em; font-weight: 600; }
-
-        /* HEADERS */
-        header.app-header {
-            background-color: var(--header-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            padding: calc(var(--safe-top, 0px) + 10px) 15px 12px; text-align: center;
-            position: relative; z-index: 20; border-bottom: 1px solid var(--border);
+        .icon-bg { 
+            width: 100%; aspect-ratio: 1; border-radius: 22%; 
+            display: flex; justify-content: center; align-items: center; 
+            font-size: 40px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); 
         }
-        .nav-btn { position: absolute; left: 15px; bottom: 12px; background: none; border: none; color: var(--primary); font-size: 17px; display: flex; align-items: center; }
+        .icon-bg.medical { background: linear-gradient(135deg, #FF5E5E, #D71920); }
+        .icon-bg.cocktail { background: linear-gradient(135deg, #FF9500, #FF3B30); }
+        .app-icon span { font-size: 15px; font-weight: 600; margin-top: 5px; }
 
-        .content-area { flex: 1; overflow-y: auto; padding: 15px 15px 120px; -webkit-overflow-scrolling: touch; }
+        /* SHARED HEADERS */
+        header.app-header {
+            background-color: var(--header-bg);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: calc(var(--safe-top, 0px) + 12px) 15px 12px;
+            text-align: center; border-bottom: 0.5px solid var(--border);
+            z-index: 30;
+        }
+        header.app-header h1 { margin: 0; font-size: 17px; font-weight: 700; }
+        .nav-btn { position: absolute; left: 15px; bottom: 12px; background: none; border: none; color: var(--primary); font-size: 17px; cursor: pointer; }
 
-        /* CARDS & BLOCKS */
-        .block { display: none; background: var(--bg-card); padding: 20px; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 15px; }
+        .content-area {
+            flex: 1; overflow-y: auto; 
+            padding: 15px 15px calc(var(--safe-bottom, 0px) + 110px); 
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* MEDICAL BLOCKS */
+        .block { display: none; background: var(--bg-card); padding: 20px; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 15px; border: 0.5px solid var(--border); }
         .block.visible { display: block; }
-        h2 { font-size: 1.4em; margin: 0 0 15px; font-weight: 700; }
-        h3 { font-size: 1.1em; color: var(--text-light); margin: 0 0 12px; text-transform: uppercase; font-weight: 600; }
+        h2 { font-size: 22px; margin: 0 0 15px; font-weight: 700; }
+        h3 { font-size: 13px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 15px; font-weight: 700; }
 
-        input, select, textarea { width: 100%; padding: 14px; margin-bottom: 12px; border: none; background: var(--input-fill); border-radius: 12px; font-size: 16px; color: var(--text-dark); box-shadow: var(--shadow); }
+        input, select, textarea { width: 100%; padding: 14px; margin-bottom: 12px; border: none; background: var(--input-fill); border-radius: 12px; font-size: 17px; color: var(--text-dark); outline: none; }
         .row { display: flex; gap: 10px; }
-        .row > * { flex: 1; }
+        .row > * { flex: 1; min-width: 0; }
 
         .option-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-        .option-group button { flex: 1; min-width: 80px; background: var(--bg-main); border: none; padding: 12px; border-radius: 10px; color: var(--text-dark); font-weight: 600; }
+        .option-group button { flex: 1; min-width: 80px; background: var(--input-fill); border: none; padding: 12px; border-radius: 10px; color: var(--text-dark); font-weight: 600; font-size: 14px; }
         .option-group button.selected { background: var(--primary); color: white; }
         .option-group button[value="conscious"].selected { background: var(--success); }
         .option-group button[value="unconscious"].selected { background: var(--accent); }
 
-        .btn-main { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-size: 17px; font-weight: 600; cursor: pointer; }
+        .btn-main { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-size: 17px; font-weight: 600; cursor: pointer; box-shadow: var(--shadow); }
+        .btn-main:active { transform: scale(0.97); }
 
-        /* ACTION BAR */
+        /* ACTION BAR (Bottom) */
         .action-bar {
-            display: flex; justify-content: space-around; align-items: center; position: absolute; bottom: 0; width: 100%;
-            padding: 10px 10px calc(var(--safe-bottom, 0px) + 10px); background: var(--bar-bg);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border); z-index: 20;
+            display: grid; grid-template-columns: repeat(3, 1fr); align-items: center; 
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            /* Vertical padding plus safe area to hit the very bottom */
+            padding: 12px 10px calc(var(--safe-bottom, 0px) + 12px); 
+            background: var(--bar-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 0.5px solid var(--border); z-index: 40;
         }
-        .action-bar button { background: none; border: none; color: var(--primary); font-size: 24px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .action-bar button { background: none; border: none; color: var(--primary); font-size: 24px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0; }
         .action-bar button span { font-size: 10px; font-weight: 600; color: var(--text-light); text-transform: uppercase; }
 
         /* MIXOLOGY */
         .filter-chips { display: flex; gap: 10px; padding: 15px; overflow-x: auto; scrollbar-width: none; }
         .filter-chips::-webkit-scrollbar { display: none; }
-        .chip { flex-shrink: 0; padding: 8px 20px; background: var(--bg-card); border-radius: 20px; font-size: 14px; font-weight: 600; box-shadow: var(--shadow); }
-        .chip.active { background: var(--primary); color: white; }
+        .chip { flex-shrink: 0; padding: 8px 18px; background: var(--bg-card); border-radius: 20px; font-size: 14px; font-weight: 600; box-shadow: var(--shadow); border: 0.5px solid var(--border); }
+        .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+        
         .recipe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .recipe-card { background: var(--bg-card); border-radius: 16px; padding: 20px; box-shadow: var(--shadow); text-align: center; cursor: pointer; }
-        .recipe-emoji { font-size: 40px; margin-bottom: 8px; }
+        .recipe-card { background: var(--bg-card); border-radius: 20px; padding: 20px; box-shadow: var(--shadow); text-align: center; cursor: pointer; border: 0.5px solid var(--border); }
+        .recipe-emoji { font-size: 44px; margin-bottom: 8px; }
 
-        /* MODALS */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 99; }
-        .modal-box { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 380px; max-height: 80vh; background: var(--bg-card); border-radius: 24px; z-index: 100; overflow-y: auto; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        /* OVERLAYS */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 100; animation: fade 0.2s ease; }
+        .modal-box { 
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            width: 90%; max-width: 380px; max-height: 80vh; background: var(--bg-card); 
+            border-radius: 28px; z-index: 101; overflow-y: auto; padding: 25px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 0.5px solid var(--border); 
+        }
+        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -157,7 +190,7 @@
                     <form id="passenger-form">
                         <div class="row">
                             <input type="text" id="seat" placeholder="Seat (e.g., 2A)">
-                            <input type="number" id="age" placeholder="Age">
+                            <input type="number" id="age" placeholder="Age" inputmode="numeric">
                         </div>
                         <select id="gender">
                             <option value="">Gender</option>
@@ -165,16 +198,16 @@
                             <option value="Female">Female</option>
                         </select>
                     </form>
-                    <div class="dashboard-grid" style="padding:0; gap:12px; grid-template-columns:1fr;">
-                        <button class="btn-main" style="background:var(--bg-card); color:var(--text-dark); text-align:left; display:flex; justify-content:space-between;" onclick="startAssessment('primary-assessment')">Primary Assessment <span>›</span></button>
-                        <button class="btn-main" style="background:var(--bg-card); color:var(--text-dark); text-align:left; display:flex; justify-content:space-between;" onclick="startAssessment('secondary-assessment')">Secondary (SAMPLE) <span>›</span></button>
-                        <button class="btn-main" style="background:var(--bg-card); color:var(--text-dark); text-align:left; display:flex; justify-content:space-between;" onclick="startAssessment('vital-signs')">Vital Signs <span>›</span></button>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+                        <button class="btn-main" style="background:var(--bg-card); color:var(--text-dark); text-align:left; display:flex; justify-content:space-between; border:0.5px solid var(--border);" onclick="startAssessment('primary-assessment')">Primary Assessment <span>›</span></button>
+                        <button class="btn-main" style="background:var(--bg-card); color:var(--text-dark); text-align:left; display:flex; justify-content:space-between; border:0.5px solid var(--border);" onclick="startAssessment('secondary-assessment')">Secondary (SAMPLE) <span>›</span></button>
+                        <button class="btn-main" style="background:var(--bg-card); color:var(--text-dark); text-align:left; display:flex; justify-content:space-between; border:0.5px solid var(--border);" onclick="startAssessment('vital-signs')">Vital Signs <span>›</span></button>
                     </div>
                 </section>
 
                 <section id="primary-assessment" class="block">
                     <h2>Primary Assessment</h2>
-                    <h3>LOC</h3>
+                    <h3>Consciousness</h3>
                     <div class="option-group">
                         <button type="button" name="loc" value="conscious" onclick="sel('loc','conscious')">Conscious</button>
                         <button type="button" name="loc" value="semi-conscious" onclick="sel('loc','semi-conscious')">Semi</button>
@@ -193,13 +226,15 @@
                     <input type="text" id="signs" placeholder="Signs & Symptoms (S)">
                     <input type="text" id="allergies" placeholder="Allergies (A)">
                     <input type="text" id="meds" placeholder="Medications (M)">
+                    <textarea id="past" placeholder="Past Medical History (P)" rows="3" style="font-family: inherit;"></textarea>
                     <button class="btn-main" onclick="backToSelection()">Save & Return</button>
                 </section>
 
                 <section id="vital-signs" class="block">
                     <h2>Vital Signs</h2>
-                    <input type="number" id="pulse" placeholder="Pulse (BPM)">
-                    <input type="number" id="spo2" placeholder="O2 Saturation (%)">
+                    <input type="number" id="pulse" placeholder="Pulse (BPM)" inputmode="numeric">
+                    <input type="number" id="spo2" placeholder="O2 Saturation (%)" inputmode="numeric">
+                    <input type="text" id="bp" placeholder="Blood Pressure (e.g. 120/80)">
                     <button class="btn-main" onclick="backToSelection()">Save & Return</button>
                 </section>
             </div>
@@ -214,10 +249,13 @@
         <div id="cocktail-app" class="app-view">
             <header class="app-header">
                 <button class="nav-btn" onclick="openApp('dashboard-view')">Home</button>
-                <h1>Mixology</h1>
+                <h1>Mixology Guide</h1>
             </header>
             <div style="padding: 15px 15px 0;">
-                <input type="text" id="search" placeholder="Search drinks..." onkeyup="filter()">
+                <div style="display:flex; align-items:center; background:var(--input-fill); border-radius:12px; padding:0 12px; box-shadow:var(--shadow);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.3; margin-right:8px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="search" placeholder="Search drinks..." onkeyup="filter()" style="margin-bottom:0; box-shadow:none; background:transparent;">
+                </div>
             </div>
             <div class="filter-chips">
                 <div class="chip active" onclick="setFilter('All', this)">All</div>
@@ -229,7 +267,7 @@
             </div>
         </div>
 
-        <!-- MODALS -->
+        <!-- OVERLAYS -->
         <div id="overlay" class="modal-overlay" onclick="closeModal()"></div>
         <div id="modal" class="modal-box"></div>
     </div>
@@ -242,7 +280,7 @@
             { id: 4, name: "Kir Royale", type: "Cocktail", emoji: "🥂", glass: "Champagne Flute", ice: "No Ice", ingredients: ["1/3 Crème de Cassis", "Champagne"], steps: "Pour Cassis. Top with Champagne.", garnish: "None." },
             { id: 5, name: "Manhattan", type: "Cocktail", emoji: "🥃", glass: "Tumbler", ice: "3-4 Cubes", ingredients: ["Double Bourbon", "Bitters", "Vermouth"], steps: "Stir 10s. Strain over ice.", garnish: "Cherry/Lemon." },
             { id: 6, name: "Espresso Martini", type: "Cocktail", emoji: "☕", glass: "Cocktail Glass", ice: "Shaker Ice", ingredients: ["Vodka", "Tia Maria", "Espresso"], steps: "Vigorous shake 10s. Strain.", garnish: "3 beans." },
-            { id: 7, name: "Mojito", type: "Cocktail", emoji: "🌿", glass: "Tumbler", ice: "3-4 Cubes", ingredients: ["White Rum", "Lime", "Mint", "Syrup", "Soda"], steps: "Muddle mint/lime/syrup. Add Rum/Ice. Top with Soda.", garnish: "Mint sprig." },
+            { id: 7, name: "Mojito", type: "Cocktail", emoji: "🌿", glass: "Tumbler", ice: "3-4 Cubes", ingredients: ["Rum", "Lime", "Mint", "Syrup", "Soda"], steps: "Muddle mint/lime/syrup. Add Rum/Ice. Top with Soda.", garnish: "Mint sprig." },
             { id: 8, name: "Old Fashioned", type: "Cocktail", emoji: "🥃", glass: "Tumbler", ice: "3-4 Cubes", ingredients: ["Bourbon", "Bitters", "Syrup"], steps: "Stir all with ice for 10s.", garnish: "Cherry/Orange." },
             { id: 9, name: "Negroni", type: "Cocktail", emoji: "🥃", glass: "Tumbler", ice: "3-4 Cubes", ingredients: ["Gin", "Campari", "Martini Rosso"], steps: "Stir with ice. Strain over fresh ice.", garnish: "Orange." },
             { id: 10, name: "Virgin Mojito", type: "Mocktail", emoji: "🌿", glass: "Tumbler", ice: "3-4 Cubes", ingredients: ["Lime", "Mint", "Syrup", "Soda"], steps: "Muddle lime/mint/syrup. Add ice. Top with soda.", garnish: "Mint sprig." },
@@ -279,7 +317,14 @@
 
         function showSummary() {
             const modal = document.getElementById('modal');
-            modal.innerHTML = `<h2>Summary</h2><p><b>Seat:</b> ${document.getElementById('seat').value || 'N/A'}</p><p><b>LOC:</b> ${currentMed.loc || 'N/A'}</p><p><b>Pulse:</b> ${document.getElementById('pulse').value || 'N/A'}</p><button class="btn-main" onclick="closeModal()">Close</button>`;
+            modal.innerHTML = `
+                <h2 style="margin-top:0">Assessment Log</h2>
+                <p><b>Seat:</b> ${document.getElementById('seat').value || 'N/A'}</p>
+                <p><b>LOC:</b> ${currentMed.loc || 'N/A'}</p>
+                <p><b>Airway:</b> ${currentMed.airway || 'N/A'}</p>
+                <p><b>Vitals:</b> ${document.getElementById('pulse').value || '-'} BPM, ${document.getElementById('spo2').value || '-'}% O2</p>
+                <button class="btn-main" onclick="closeModal()" style="margin-top:20px">Done</button>
+            `;
             document.getElementById('overlay').style.display = 'block';
             modal.style.display = 'block';
         }
@@ -302,20 +347,36 @@
             const grid = document.getElementById('recipe-grid');
             grid.innerHTML = '';
             drinks.filter(d => (filterType === 'All' || d.type === filterType) && d.name.toLowerCase().includes(q)).forEach(d => {
-                grid.innerHTML += `<div class="recipe-card" onclick="openRecipe(${d.id})"><div class="recipe-emoji">${d.emoji}</div><div style="font-weight:700">${d.name}</div></div>`;
+                grid.innerHTML += `<div class="recipe-card" onclick="openRecipe(${d.id})"><div class="recipe-emoji">${d.emoji}</div><div style="font-weight:700; font-size:15px;">${d.name}</div></div>`;
             });
         }
 
         function openRecipe(id) {
             const d = drinks.find(x => x.id === id);
             const modal = document.getElementById('modal');
-            modal.innerHTML = `<h2>${d.name}</h2><p><b>Glass:</b> ${d.glass}</p><p><b>Ingredients:</b> ${d.ingredients.join(', ')}</p><p><b>Method:</b> ${d.steps}</p><button class="btn-main" onclick="closeModal()">Close</button>`;
+            modal.innerHTML = `
+                <h2 style="margin-top:0; display:flex; align-items:center; gap:10px;"><span>${d.emoji}</span> ${d.name}</h2>
+                <p><b>Glass:</b> ${d.glass}</p>
+                <p><b>Ingredients:</b><br>${d.ingredients.join(', ')}</p>
+                <p><b>Method:</b><br>${d.steps}</p>
+                <p><b>Garnish:</b><br>${d.garnish}</p>
+                <button class="btn-main" onclick="closeModal()" style="margin-top:20px">Close</button>
+            `;
             document.getElementById('overlay').style.display = 'block';
             modal.style.display = 'block';
         }
 
-        function downloadNotes() { alert("Data captured. Copy the summary to notes."); }
-        function clearData() { if(confirm("Clear log?")) location.reload(); }
+        function downloadNotes() {
+            const summary = `Crew Hub Medical Log\nSeat: ${document.getElementById('seat').value}\nLOC: ${currentMed.loc}\nPulse: ${document.getElementById('pulse').value}`;
+            const blob = new Blob([summary], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'medical_log.txt';
+            a.click();
+        }
+
+        function clearData() { if(confirm("Clear current assessment?")) location.reload(); }
 
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js');
