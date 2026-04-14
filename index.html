@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+    <link rel="manifest" href="manifest.json">
     <title>Crew Hub</title>
     <style>
         :root {
-            /* Adaptive Colors */
             --primary: #007AFF; 
             --primary-hover: #0056b3;
             --accent: #d71920; 
             --success: #34C759; 
             --warning: #FFCC00; 
-            
-            /* Light Mode (Default) */
             --bg-main: #F2F2F7; 
             --bg-card: #ffffff;
             --text-dark: #000000;
@@ -30,7 +30,6 @@
             --safe-bottom: env(safe-area-inset-bottom);
         }
 
-        /* Dark Mode Overrides */
         @media (prefers-color-scheme: dark) {
             :root {
                 --bg-main: #000000; 
@@ -45,280 +44,90 @@
             }
         }
 
-        /* BASE STYLES */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body {
-            height: 100dvh;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: var(--bg-main);
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-font-smoothing: antialiased;
+            height: 100%; width: 100%; margin: 0; padding: 0;
+            overflow: hidden; background-color: var(--bg-main);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
             color: var(--text-dark);
-        }
-
-        body {
-            display: flex;
-            justify-content: center;
         }
 
         .container {
-            max-width: 430px;
-            width: 100%;
-            background: var(--bg-main);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            height: 100dvh;
-            overflow: hidden;
+            width: 100%; height: 100%; display: flex; flex-direction: column;
+            position: relative; overflow: hidden;
+            padding-bottom: var(--safe-bottom); /* Fix for home indicator space */
         }
 
-        /* APP SWITCHING LOGIC */
-        .app-view { display: none; animation: fadeAppIn 0.3s ease-out; flex-direction: column; height: 100%; }
+        .app-view { display: none; flex-direction: column; height: 100%; animation: fade 0.3s ease; }
         .app-view.visible-app { display: flex; }
+        @keyframes fade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
-        @keyframes fadeAppIn {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        /* DASHBOARD STYLES */
-        .dashboard-header {
-            padding: calc(var(--safe-top, 0px) + 20px) 20px 10px 20px;
-            text-align: left;
-        }
-        .dashboard-header h1 {
-            margin: 0;
-            font-size: 2.2em;
-            font-weight: 800;
-            color: var(--text-dark);
-            letter-spacing: -0.5px;
-        }
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 25px;
-            padding: 30px 25px;
-            align-content: start;
-        }
-        .app-icon {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
+        /* DASHBOARD */
+        .dashboard-header { padding: calc(var(--safe-top, 0px) + 30px) 25px 10px; }
+        .dashboard-header h1 { margin: 0; font-size: 2.2em; font-weight: 800; letter-spacing: -0.5px; }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 25px; }
+        .app-icon { display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; }
         .app-icon:active { transform: scale(0.92); }
-        .app-icon .icon-bg {
-            width: 85px; height: 85px;
-            border-radius: 22px;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 40px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
-        }
+        .icon-bg { width: 85px; height: 85px; border-radius: 22px; display: flex; justify-content: center; align-items: center; font-size: 40px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
         .icon-bg.medical { background: linear-gradient(135deg, #ff5e5e, #d71920); }
         .icon-bg.cocktail { background: linear-gradient(135deg, #ffaa00, #ff5e00); }
-        
-        .app-icon span {
-            font-size: 0.9em;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
+        .app-icon span { font-size: 0.9em; font-weight: 600; }
 
-        /* SHARED APP HEADER */
+        /* HEADERS */
         header.app-header {
-            background-color: var(--header-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            color: var(--text-dark);
-            padding: calc(var(--safe-top, 0px) + 15px) 15px 12px 15px;
-            text-align: center;
-            position: relative;
-            z-index: 20;
-            border-bottom: 1px solid var(--border);
+            background-color: var(--header-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: calc(var(--safe-top, 0px) + 10px) 15px 12px; text-align: center;
+            position: relative; z-index: 20; border-bottom: 1px solid var(--border);
         }
-        header.app-header h1 {
-            margin: 0;
-            font-size: 1.2em;
-            font-weight: 700;
-        }
-        .nav-btn {
-            position: absolute;
-            left: 10px;
-            bottom: 10px;
-            background: transparent;
-            color: var(--primary);
-            border: none;
-            padding: 0 5px;
-            font-size: 1.05em;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            font-weight: 400;
-        }
-        .nav-btn svg { margin-right: 4px; }
+        .nav-btn { position: absolute; left: 15px; bottom: 12px; background: none; border: none; color: var(--primary); font-size: 17px; display: flex; align-items: center; }
 
-        .content-area {
-            flex-grow: 1;
-            padding: 10px 15px calc(var(--safe-bottom, 0px) + 90px);
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
+        .content-area { flex: 1; overflow-y: auto; padding: 15px 15px 120px; -webkit-overflow-scrolling: touch; }
 
-        /* SHARED FORMS */
-        h2 { font-size: 1.4em; color: var(--text-dark); text-align: left; margin-top: 5px; margin-bottom: 15px; font-weight: 700;}
-        h3 { font-size: 1.1em; color: var(--text-dark); margin-bottom: 12px; text-align: left; font-weight: 600;}
-        
-        input, select, textarea {
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 12px;
-            border: none;
-            background: var(--input-fill);
-            border-radius: 12px;
-            box-sizing: border-box;
-            font-size: 1em;
-            box-shadow: var(--shadow);
-            -webkit-appearance: none;
-            color: var(--text-dark);
-        }
-        input::placeholder { color: var(--text-light); }
-        .row { display: flex; gap: 12px; }
-        .row input, .row select { flex: 1; min-width: 0; }
-
-        /* BUTTONS */
-        .btn-main {
-            width: 100%; padding: 14px; background: var(--primary); color: white;
-            border: none; border-radius: 12px; font-size: 1em; font-weight: 600;
-            cursor: pointer; transition: transform 0.1s, opacity 0.2s;
-        }
-        .btn-main:active { transform: scale(0.97); opacity: 0.9; }
-
-        /* ================== MEDICAL APP SPECIFIC ================== */
-        .selection-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 20px; }
-        .selection-grid button {
-            background: var(--bg-card); color: var(--text-dark); text-align: left;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: var(--shadow); padding: 16px; border: none; border-radius: 12px;
-            font-size: 1em; font-weight: 600; cursor: pointer;
-        }
-        .selection-grid button::after { content: "›"; font-size: 1.5em; color: var(--text-light); font-weight: 300; margin-top: -2px; }
-        .selection-grid button:active { transform: scale(0.97); }
-
-        .block {
-            display: none; animation: fadeIn 0.25s ease-out;
-            background: var(--bg-card); padding: 15px; border-radius: var(--radius);
-            box-shadow: var(--shadow); margin-bottom: 15px;
-        }
-        #selection-menu { background: transparent; box-shadow: none; padding: 0; }
+        /* CARDS & BLOCKS */
+        .block { display: none; background: var(--bg-card); padding: 20px; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 15px; }
         .block.visible { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        h2 { font-size: 1.4em; margin: 0 0 15px; font-weight: 700; }
+        h3 { font-size: 1.1em; color: var(--text-light); margin: 0 0 12px; text-transform: uppercase; font-weight: 600; }
 
-        .option-group { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-start; margin-bottom: 20px; }
-        .option-group button {
-            flex: 1 1 calc(33.333% - 8px); background: var(--bg-main); color: var(--text-dark);
-            padding: 12px 6px; font-size: 0.85em; font-weight: 500; border-radius: 8px; border: none;
-        }
-        .option-group button.selected { background: var(--primary); color: white; font-weight: 600; }
-        
-        .option-group button[value="conscious"].selected, .option-group button[value="normal"].selected { background: var(--success); }
-        .option-group button[value="semi-conscious"].selected, .option-group button[value="abnormal"].selected { background: var(--warning); color: #000; }
-        .option-group button[value="unconscious"].selected, .option-group button[value="obstructed"].selected, .option-group button[value="not_breathing"].selected { background: var(--accent); color: #fff; }
+        input, select, textarea { width: 100%; padding: 14px; margin-bottom: 12px; border: none; background: var(--input-fill); border-radius: 12px; font-size: 16px; color: var(--text-dark); box-shadow: var(--shadow); }
+        .row { display: flex; gap: 10px; }
+        .row > * { flex: 1; }
 
+        .option-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .option-group button { flex: 1; min-width: 80px; background: var(--bg-main); border: none; padding: 12px; border-radius: 10px; color: var(--text-dark); font-weight: 600; }
+        .option-group button.selected { background: var(--primary); color: white; }
+        .option-group button[value="conscious"].selected { background: var(--success); }
+        .option-group button[value="unconscious"].selected { background: var(--accent); }
+
+        .btn-main { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-size: 17px; font-weight: 600; cursor: pointer; }
+
+        /* ACTION BAR */
         .action-bar {
             display: flex; justify-content: space-around; align-items: center; position: absolute; bottom: 0; width: 100%;
             padding: 10px 10px calc(var(--safe-bottom, 0px) + 10px); background: var(--bar-bg);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border); z-index: 20;
         }
-        .action-bar button {
-            background: transparent; color: var(--primary); font-size: 1.6em; padding: 8px 20px;
-            border: none; display: flex; flex-direction: column; align-items: center; gap: 4px;
-        }
-        .action-bar button span { font-size: 0.65em; font-weight: 500; color: var(--text-light); margin-top: 2px; }
-        .action-bar button:active { transform: scale(0.9); }
+        .action-bar button { background: none; border: none; color: var(--primary); font-size: 24px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .action-bar button span { font-size: 10px; font-weight: 600; color: var(--text-light); text-transform: uppercase; }
 
-        /* ================== COCKTAIL APP SPECIFIC ================== */
-        .search-container { padding: 10px 15px; background-color: transparent; z-index: 10; }
-        .search-bar { display: flex; align-items: center; background: var(--input-fill); border-radius: 10px; padding: 8px 12px; box-shadow: var(--shadow); }
-        .search-bar svg { color: var(--text-light); margin-right: 8px; }
-        .search-bar input { border: none; background: transparent; width: 100%; font-size: 1em; color: var(--text-dark); outline: none; margin-bottom:0; padding:0; box-shadow:none;}
-        
-        /* Updated vertical padding to prevent shadow cropping */
-        .filter-chips { 
-            display: flex; 
-            gap: 12px; 
-            padding: 12px 15px; 
-            overflow-x: auto; 
-            -webkit-overflow-scrolling: touch; 
-            scrollbar-width: none; 
-        }
+        /* MIXOLOGY */
+        .filter-chips { display: flex; gap: 10px; padding: 15px; overflow-x: auto; scrollbar-width: none; }
         .filter-chips::-webkit-scrollbar { display: none; }
-        .chip {
-            flex-shrink: 0; /* Prevents chips from squashing */
-            padding: 8px 18px; 
-            background: var(--bg-card); 
-            border-radius: 20px; 
-            font-size: 0.9em; 
-            font-weight: 500;
-            color: var(--text-dark); 
-            white-space: nowrap; 
-            cursor: pointer; 
-            box-shadow: var(--shadow); 
-            transition: all 0.2s;
-        }
+        .chip { flex-shrink: 0; padding: 8px 20px; background: var(--bg-card); border-radius: 20px; font-size: 14px; font-weight: 600; box-shadow: var(--shadow); }
         .chip.active { background: var(--primary); color: white; }
-
         .recipe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .recipe-card {
-            background: var(--bg-card); border-radius: var(--radius); padding: 15px; box-shadow: var(--shadow);
-            cursor: pointer; transition: transform 0.1s; display: flex; flex-direction: column; align-items: center; text-align: center;
-        }
-        .recipe-card:active { transform: scale(0.95); }
-        .recipe-emoji { font-size: 2.5em; margin-bottom: 8px; }
-        .recipe-name { font-size: 0.95em; font-weight: 600; color: var(--text-dark); margin-bottom: 4px; }
-        .recipe-type { font-size: 0.75em; color: var(--text-light); font-weight: 500; }
+        .recipe-card { background: var(--bg-card); border-radius: 16px; padding: 20px; box-shadow: var(--shadow); text-align: center; cursor: pointer; }
+        .recipe-emoji { font-size: 40px; margin-bottom: 8px; }
 
-        /* ================== MODALS ================== */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 99;
-        }
-        .modal-box {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 90%; max-width: 360px; max-height: 85vh; background: var(--bg-card);
-            border-radius: 24px; z-index: 100; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            -webkit-overflow-scrolling: touch;
-        }
-        .close-btn {
-            position: absolute; top: 15px; right: 15px; background: var(--bg-main); color: var(--text-dark);
-            border: none; width: 30px; height: 30px; border-radius: 15px; display: flex; align-items: center; justify-content: center; cursor: pointer;
-            font-size: 1.2em; font-weight: bold;
-        }
-
-        /* Summary details */
-        ul.summary-list { list-style: none; padding: 0; margin: 0; font-size: 0.95em; color: var(--text-dark); }
-        ul.summary-list li { padding: 10px 0; border-bottom: 1px solid var(--border); line-height: 1.4; }
-        ul.summary-list li strong { color: var(--text-light); font-size: 0.9em; display: block; margin-bottom: 2px; }
-
-        .modal-header { background: var(--bg-main); padding: 25px 20px 20px 20px; text-align: center; border-bottom: 1px solid var(--border); }
-        .modal-header .emoji { font-size: 3.5em; margin-bottom: 10px; display: block; }
-        .modal-tags { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
-        .modal-tag { background: var(--border); padding: 4px 10px; border-radius: 8px; font-size: 0.75em; font-weight: 600; color: var(--text-light); }
-        .modal-body { padding: 20px; }
-        .section-title { font-size: 0.9em; text-transform: uppercase; color: var(--text-light); font-weight: 700; margin-bottom: 10px; margin-top: 20px; }
-        .section-title:first-child { margin-top: 0; }
-        .ingredients-list { list-style: none; padding: 0; margin: 0; }
-        .ingredients-list li { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.95em; display: flex; align-items: flex-start; }
-        .ingredients-list li::before { content: "•"; color: var(--primary); font-weight: bold; margin-right: 8px; }
-        .empty-state { text-align: center; color: var(--text-light); padding: 40px 20px; grid-column: span 2; }
+        /* MODALS */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 99; }
+        .modal-box { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 380px; max-height: 80vh; background: var(--bg-card); border-radius: 24px; z-index: 100; overflow-y: auto; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- DASHBOARD VIEW -->
+        <!-- DASHBOARD -->
         <div id="dashboard-view" class="app-view visible-app">
             <div class="dashboard-header">
                 <h1>Crew Hub</h1>
@@ -335,96 +144,80 @@
             </div>
         </div>
 
-        <!-- MEDICAL APP VIEW -->
+        <!-- MEDICAL APP -->
         <div id="medical-app" class="app-view">
             <header class="app-header">
                 <button id="med-home-btn" class="nav-btn" onclick="openApp('dashboard-view')">Home</button>
                 <button id="med-back-btn" class="nav-btn" onclick="backToSelection()" style="display:none">Back</button>
-                <h1>Medical App</h1>
+                <h1>Medical Log</h1>
             </header>
-
             <div class="content-area">
                 <section id="selection-menu" class="visible">
                     <h2>Passenger Details</h2>
-                    <form id="passenger-form" onchange="updateAdditionalInfo()">
+                    <form id="passenger-form">
                         <div class="row">
-                            <input type="text" name="seatNumber" placeholder="Seat (e.g., 1A)">
-                            <input type="number" name="age" placeholder="Age" inputmode="numeric">
+                            <input type="text" id="seat" placeholder="Seat (e.g., 2A)">
+                            <input type="number" id="age" placeholder="Age">
                         </div>
-                        <div class="row">
-                            <select name="gender">
-                                <option value="">Gender</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
-                            <select name="accompanied">
-                                <option value="">Accompanied?</option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
-                            </select>
-                        </div>
+                        <select id="gender">
+                            <option value="">Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
                     </form>
-                    <div class="selection-grid">
-                        <button onclick="startAssessment('primary-assessment')">Primary Assessment</button>
-                        <button onclick="startAssessment('secondary-assessment')">Secondary Assessment</button>
-                        <button onclick="startAssessment('vital-signs')">Vital Signs</button>
+                    <div class="dashboard-grid" style="padding:0; gap:12px; grid-template-columns:1fr;">
+                        <button class="btn-main" style="background:var(--bg-card); color:var(--text-dark); text-align:left; display:flex; justify-content:space-between;" onclick="startAssessment('primary-assessment')">Primary Assessment <span>›</span></button>
+                        <button class="btn-main" style="background:var(--bg-card); color:var(--text-dark); text-align:left; display:flex; justify-content:space-between;" onclick="startAssessment('secondary-assessment')">Secondary (SAMPLE) <span>›</span></button>
+                        <button class="btn-main" style="background:var(--bg-card); color:var(--text-dark); text-align:left; display:flex; justify-content:space-between;" onclick="startAssessment('vital-signs')">Vital Signs <span>›</span></button>
                     </div>
                 </section>
 
                 <section id="primary-assessment" class="block">
                     <h2>Primary Assessment</h2>
-                    <h3>1. Consciousness</h3>
+                    <h3>LOC</h3>
                     <div class="option-group">
-                        <button type="button" name="loc" value="conscious" onclick="selectSingleOption('loc', 'conscious')">Conscious</button>
-                        <button type="button" name="loc" value="semi-conscious" onclick="selectSingleOption('loc', 'semi-conscious')">Semi</button>
-                        <button type="button" name="loc" value="unconscious" onclick="selectSingleOption('loc', 'unconscious')">Unconscious</button>
+                        <button type="button" name="loc" value="conscious" onclick="sel('loc','conscious')">Conscious</button>
+                        <button type="button" name="loc" value="semi-conscious" onclick="sel('loc','semi-conscious')">Semi</button>
+                        <button type="button" name="loc" value="unconscious" onclick="sel('loc','unconscious')">Unconscious</button>
                     </div>
-                    <h3>2. Airway & Breathing</h3>
+                    <h3>Airway & Breathing</h3>
                     <div class="option-group">
-                        <button type="button" name="airway" value="normal" onclick="selectSingleOption('airway', 'normal')">Normal</button>
-                        <button type="button" name="airway" value="obstructed" onclick="selectSingleOption('airway', 'obstructed')">Obstructed</button>
+                        <button type="button" name="airway" value="normal" onclick="sel('airway','normal')">Normal</button>
+                        <button type="button" name="airway" value="obstructed" onclick="sel('airway','obstructed')">Obstructed</button>
                     </div>
-                    <button class="btn-main" onclick="submitAssessment('primary')">Save Assessment</button>
+                    <button class="btn-main" onclick="backToSelection()">Save & Return</button>
                 </section>
 
                 <section id="secondary-assessment" class="block">
-                    <h2>Secondary Assessment</h2>
-                    <form id="sample-form">
-                        <input type="text" name="signs" placeholder="Signs & Symptoms (S)">
-                        <input type="text" name="allergies" placeholder="Allergies (A)">
-                        <input type="text" name="medications" placeholder="Medications (M)">
-                        <button type="button" class="btn-main" onclick="submitAssessment('secondary')">Save SAMPLE</button>
-                    </form>
+                    <h2>SAMPLE Assessment</h2>
+                    <input type="text" id="signs" placeholder="Signs & Symptoms (S)">
+                    <input type="text" id="allergies" placeholder="Allergies (A)">
+                    <input type="text" id="meds" placeholder="Medications (M)">
+                    <button class="btn-main" onclick="backToSelection()">Save & Return</button>
                 </section>
 
                 <section id="vital-signs" class="block">
                     <h2>Vital Signs</h2>
-                    <form id="vital-form">
-                        <input type="number" name="pulse" placeholder="Pulse (BPM)">
-                        <input type="number" name="spo2" placeholder="O2 Saturation (%)">
-                        <button type="button" class="btn-main" onclick="submitAssessment('vitals')">Save Vitals</button>
-                    </form>
+                    <input type="number" id="pulse" placeholder="Pulse (BPM)">
+                    <input type="number" id="spo2" placeholder="O2 Saturation (%)">
+                    <button class="btn-main" onclick="backToSelection()">Save & Return</button>
                 </section>
             </div>
-
             <div class="action-bar">
                 <button onclick="downloadNotes()">📥<span>Save</span></button>
-                <button onclick="showMedicalSummary()">📋<span>Summary</span></button>
-                <button onclick="clearAllData()">🗑️<span>Clear</span></button>
+                <button onclick="showSummary()">📋<span>Summary</span></button>
+                <button onclick="clearData()">🗑️<span>Clear</span></button>
             </div>
         </div>
 
-        <!-- COCKTAIL APP VIEW -->
+        <!-- MIXOLOGY APP -->
         <div id="cocktail-app" class="app-view">
             <header class="app-header">
                 <button class="nav-btn" onclick="openApp('dashboard-view')">Home</button>
-                <h1>Mixology Guide</h1>
+                <h1>Mixology</h1>
             </header>
-            <div class="search-container">
-                <div class="search-bar">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" id="search-input" placeholder="Search drinks..." onkeyup="filterRecipes()">
-                </div>
+            <div style="padding: 15px 15px 0;">
+                <input type="text" id="search" placeholder="Search drinks..." onkeyup="filter()">
             </div>
             <div class="filter-chips">
                 <div class="chip active" onclick="setFilter('All', this)">All</div>
@@ -436,77 +229,35 @@
             </div>
         </div>
 
-        <!-- OVERLAYS -->
-        <div id="modal-overlay" class="modal-overlay" onclick="closeAllModals()"></div>
-        
-        <!-- Recipe Modal -->
-        <div id="recipe-modal" class="modal-box">
-            <button class="close-btn" onclick="closeAllModals()">✕</button>
-            <div class="modal-header">
-                <span class="emoji" id="modal-emoji">🍹</span>
-                <h2 id="modal-title" style="margin-bottom: 5px;">Drink Name</h2>
-                <div class="modal-tags">
-                    <span class="modal-tag" id="modal-glass">Glass</span>
-                    <span class="modal-tag" id="modal-ice">Ice</span>
-                </div>
-            </div>
-            <div class="modal-body">
-                <div class="section-title">Ingredients</div>
-                <ul class="ingredients-list" id="modal-ingredients"></ul>
-                <div class="section-title">Preparation</div>
-                <p id="modal-steps" style="font-size: 0.95em; line-height: 1.4; margin: 0;"></p>
-                <div class="section-title">Garnish</div>
-                <p id="modal-garnish" style="font-size: 0.95em; color: var(--text-light); margin: 0;"></p>
-            </div>
-        </div>
-
-        <!-- Summary Modal -->
-        <div id="summary-modal" class="modal-box" style="padding: 24px;">
-            <button class="close-btn" onclick="closeAllModals()">✕</button>
-            <h2>Assessment Summary</h2>
-            <div id="summary-content"></div>
-        </div>
+        <!-- MODALS -->
+        <div id="overlay" class="modal-overlay" onclick="closeModal()"></div>
+        <div id="modal" class="modal-box"></div>
     </div>
 
     <script>
-        // DATA
         const drinks = [
-            { id: 1, name: "Bloody Mary", type: "Cocktail", emoji: "🍅", glass: "Tumbler/Crystal", ice: "3-4 Cubes", ingredients: ["Double measure Vodka", "Big Tom spiced tomato juice", "OR Regular tomato juice", "Worcestershire sauce", "Tabasco", "Salt and Pepper"], steps: "Place ice in glass. Pour vodka. Top with tomato juice. Add condiments to taste.", garnish: "Lemon slice and celery stick." },
-            { id: 2, name: "Cosmopolitan", type: "Cocktail", emoji: "🍸", glass: "Cocktail Glass", ice: "Shaker Ice", ingredients: ["1.5 single measures Vodka", "0.5 measure Cointreau", "Single measure Cranberry juice", "0.5 measure Lime juice"], steps: "Fill half shaker with ice. Pour ingredients. Shake for 10 seconds and strain.", garnish: "None." },
-            { id: 3, name: "Classic Martini", type: "Cocktail", emoji: "🍸", glass: "Cocktail Glass", ice: "Shaker Ice", ingredients: ["Double measure Dry Gin", "0.5 measure Martini Extra Dry"], steps: "Fill half shaker with ice. Pour gin and vermouth. Stir or shake for 10 seconds and strain.", garnish: "Olive skewered." },
-            { id: 4, name: "Kir Royale", type: "Cocktail", emoji: "🥂", glass: "Champagne Flute", ice: "No Ice", ingredients: ["1/3 measure Crème de Cassis", "Champagne"], steps: "Pour Crème de Cassis into glass. Top up slowly with champagne.", garnish: "None." },
-            { id: 5, name: "Manhattan", type: "Cocktail", emoji: "🥃", glass: "Tumbler/Crystal", ice: "3-4 Cubes", ingredients: ["Double measure Bourbon", "2 dashes Angostura bitters", "0.5 measure Vermouth (Rosso or Extra Dry)"], steps: "Fill shaker with ice. Add bourbon, bitters, and vermouth. Stir for 10 seconds and strain over fresh ice.", garnish: "Cherry or Lemon slice." },
-            { id: 6, name: "Breakfast Martini", type: "Cocktail", emoji: "🍊", glass: "Cocktail Glass", ice: "Shaker Ice", ingredients: ["Single measure Dry Gin", "0.5 measure Cointreau", "1 tsp Orange marmalade", "Lime juice", "Fresh orange juice"], steps: "Fill shaker with ice. Add marmalade and liquids. Shake for 10 seconds and strain.", garnish: "None." },
-            { id: 7, name: "Espresso Martini", type: "Cocktail", emoji: "☕", glass: "Cocktail Glass", ice: "Shaker Ice", ingredients: ["Single measure Vodka", "Single measure Tia Maria", "Single measure Espresso"], steps: "Fill shaker with ice. Pour ingredients. Vigorously shake for 10 seconds and strain.", garnish: "3 coffee beans." },
-            { id: 8, name: "Mojito", type: "Cocktail", emoji: "🌿", glass: "Tumbler/Crystal", ice: "3-4 Cubes", ingredients: ["Double measure White Rum", "4 Lime wedges", "10 Mint leaves", "Sugar syrup", "Soda"], steps: "Add syrup, lime, and mint. Muddle. Add rum and ice. Top with soda and stir.", garnish: "Mint sprig." },
-            { id: 9, name: "Old Fashioned", type: "Cocktail", emoji: "🥃", glass: "Tumbler/Crystal", ice: "3-4 Cubes", ingredients: ["Double measure Bourbon", "2 dashes Angostura bitters", "Sugar syrup"], steps: "Add syrup, bitters, and bourbon to glass. Add ice. Stir for 10 seconds.", garnish: "Cherry and orange slice." },
-            { id: 10, name: "Champagne Cocktail", type: "Cocktail", emoji: "🥂", glass: "Champagne Flute", ice: "No Ice", ingredients: ["Champagne", "2 dashes Angostura bitters", "1 sachet Sugar", "0.5 measure Cognac"], steps: "Add sugar to flute. Add bitters and cognac. Top slowly with champagne.", garnish: "Cherry and orange slice." },
-            { id: 11, name: "Negroni", type: "Cocktail", emoji: "🥃", glass: "Tumbler/Crystal", ice: "3-4 Cubes", ingredients: ["Single measure Dry Gin", "Single measure Campari", "Single measure Martini Rosso"], steps: "Stir ingredients in shaker with ice for 10 seconds. Strain over fresh ice.", garnish: "Orange slice." },
-            { id: 12, name: "Aperol Spritz", type: "Cocktail", emoji: "🍹", glass: "Wine Glass", ice: "3-4 Cubes", ingredients: ["Ready-made Aperol Spritz bottle"], steps: "Place ice and orange slice in glass. Pour entire bottle.", garnish: "Orange slice." },
-            { id: 13, name: "Vesper", type: "Cocktail", emoji: "🍸", glass: "Cocktail Glass", ice: "Shaker Ice", ingredients: ["Double measure Gin", "Single measure Vodka", "0.5 measure Martini Extra Dry"], steps: "Fill shaker with ice. Pour spirits. Stir for 20 seconds and strain.", garnish: "Lemon slice." },
-            { id: 14, name: "Rum Revolver", type: "Cocktail", emoji: "🥃", glass: "Tumbler/Crystal", ice: "Shaker Ice", ingredients: ["Double measure Aged Rum", "0.5 measure Tia Maria", "3 dashes Angostura bitters"], steps: "Fill shaker with ice. Pour ingredients. Stir for 20 seconds and strain over fresh ice.", garnish: "Orange slice." },
-            { id: 15, name: "Orange Fizz", type: "Mocktail", emoji: "🍊", glass: "Champagne Flute", ice: "No Ice", ingredients: ["Fresh orange juice", "Ginger ale"], steps: "Half fill flute with orange juice. Top up with ginger ale.", garnish: "None." },
-            { id: 16, name: "Apple Spritzer", type: "Mocktail", emoji: "🍎", glass: "Champagne Flute", ice: "No Ice", ingredients: ["Apple juice", "Soda water"], steps: "Half fill flute with apple juice. Top up with soda water.", garnish: "Mint sprig." },
-            { id: 17, name: "Virgin Cucumber Gimlet", type: "Mocktail", emoji: "🥒", glass: "Tumbler/Crystal", ice: "3-4 Cubes", ingredients: ["Double Tanqueray 0.0", "Sugar syrup", "Cucumber ribbons", "Lime juice", "Soda"], steps: "Muddle syrup, cucumber, and lime. Add 0.0 and ice. Top with soda.", garnish: "Mint sprig." },
-            { id: 18, name: "Rose Iced Tea", type: "Mocktail", emoji: "🌹", glass: "Tumbler/Crystal", ice: "3-4 Cubes", ingredients: ["Pre-mix Rose Iced Tea bottle"], steps: "Shake pre-mix bottle well. Pour over ice in glass.", garnish: "Basil leaf and edible flower." },
-            { id: 19, name: "Tropical Twist", type: "Mocktail", emoji: "🍍", glass: "Tumbler/Crystal", ice: "3-4 Cubes", ingredients: ["Pre-mix Tropical Twist bottle"], steps: "Shake pre-mix bottle well. Pour over ice in glass.", garnish: "Basil leaf and dehydrated apple." },
-            { id: 20, name: "Citrus Twist", type: "Mocktail", emoji: "🍋", glass: "Tumbler/Crystal", ice: "3-4 Cubes", ingredients: ["Pre-mix Citrus Twist bottle"], steps: "Shake pre-mix bottle well. Pour over ice in glass.", garnish: "Mint leaves and dehydrated lime." },
-            { id: 21, name: "Raspberry Spice", type: "Mocktail", emoji: "🍓", glass: "Tumbler/Crystal", ice: "3-4 Cubes", ingredients: ["Pre-mix Raspberry Spice bottle"], steps: "Shake pre-mix bottle well. Pour over ice in glass.", garnish: "Edible flower and orange slice." },
-            { id: 22, name: "Virgin Mary", type: "Mocktail", emoji: "🍅", glass: "Tumbler/Crystal", ice: "3-4 Cubes", ingredients: ["Big Tom spiced tomato juice", "Condiments to taste"], steps: "Place ice in glass. Top with spiced tomato juice.", garnish: "Lemon slice and celery stick." },
-            { id: 23, name: "Virgin Mojito", type: "Mocktail", emoji: "🌿", glass: "Tumbler/Crystal", ice: "3-4 Cubes", ingredients: ["4 Lime wedges", "10 Mint leaves", "Sugar syrup", "Soda"], steps: "Muddle lime, mint, and syrup. Add ice. Top with soda.", garnish: "Mint sprig." },
-            { id: 24, name: "Mint Lemonade", type: "Mocktail", emoji: "🍋", glass: "Tumbler/Crystal", ice: "3-4 Cubes", ingredients: ["Pre-mix Mint Lemonade bottle"], steps: "Shake pre-mix bottle well. Pour over ice in glass.", garnish: "Mint sprig." }
+            { id: 1, name: "Bloody Mary", type: "Cocktail", emoji: "🍅", glass: "Tumbler/Crystal", ice: "3-4 Cubes", ingredients: ["Double measure Vodka", "Big Tom spiced tomato juice", "Worcestershire", "Tabasco", "Salt/Pepper"], steps: "Place ice. Add vodka. Top with juice. Add condiments.", garnish: "Lemon and celery." },
+            { id: 2, name: "Cosmopolitan", type: "Cocktail", emoji: "🍸", glass: "Cocktail Glass", ice: "Shaker Ice", ingredients: ["1.5 Vodka", "0.5 Cointreau", "Single Cranberry", "0.5 Lime"], steps: "Shake with ice for 10s. Strain.", garnish: "None." },
+            { id: 3, name: "Classic Martini", type: "Cocktail", emoji: "🍸", glass: "Cocktail Glass", ice: "Shaker Ice", ingredients: ["Double Gin", "0.5 Martini Extra Dry"], steps: "Stir/shake for 10s. Strain.", garnish: "Olive." },
+            { id: 4, name: "Kir Royale", type: "Cocktail", emoji: "🥂", glass: "Champagne Flute", ice: "No Ice", ingredients: ["1/3 Crème de Cassis", "Champagne"], steps: "Pour Cassis. Top with Champagne.", garnish: "None." },
+            { id: 5, name: "Manhattan", type: "Cocktail", emoji: "🥃", glass: "Tumbler", ice: "3-4 Cubes", ingredients: ["Double Bourbon", "Bitters", "Vermouth"], steps: "Stir 10s. Strain over ice.", garnish: "Cherry/Lemon." },
+            { id: 6, name: "Espresso Martini", type: "Cocktail", emoji: "☕", glass: "Cocktail Glass", ice: "Shaker Ice", ingredients: ["Vodka", "Tia Maria", "Espresso"], steps: "Vigorous shake 10s. Strain.", garnish: "3 beans." },
+            { id: 7, name: "Mojito", type: "Cocktail", emoji: "🌿", glass: "Tumbler", ice: "3-4 Cubes", ingredients: ["White Rum", "Lime", "Mint", "Syrup", "Soda"], steps: "Muddle mint/lime/syrup. Add Rum/Ice. Top with Soda.", garnish: "Mint sprig." },
+            { id: 8, name: "Old Fashioned", type: "Cocktail", emoji: "🥃", glass: "Tumbler", ice: "3-4 Cubes", ingredients: ["Bourbon", "Bitters", "Syrup"], steps: "Stir all with ice for 10s.", garnish: "Cherry/Orange." },
+            { id: 9, name: "Negroni", type: "Cocktail", emoji: "🥃", glass: "Tumbler", ice: "3-4 Cubes", ingredients: ["Gin", "Campari", "Martini Rosso"], steps: "Stir with ice. Strain over fresh ice.", garnish: "Orange." },
+            { id: 10, name: "Virgin Mojito", type: "Mocktail", emoji: "🌿", glass: "Tumbler", ice: "3-4 Cubes", ingredients: ["Lime", "Mint", "Syrup", "Soda"], steps: "Muddle lime/mint/syrup. Add ice. Top with soda.", garnish: "Mint sprig." },
+            { id: 11, name: "Rose Iced Tea", type: "Mocktail", emoji: "🌹", glass: "Tumbler", ice: "3-4 Cubes", ingredients: ["Rose Iced Tea Pre-mix"], steps: "Shake bottle. Pour over ice.", garnish: "Basil/Flower." },
+            { id: 12, name: "Mint Lemonade", type: "Mocktail", emoji: "🍋", glass: "Tumbler", ice: "3-4 Cubes", ingredients: ["Mint Lemonade Pre-mix"], steps: "Shake bottle. Pour over ice.", garnish: "Mint sprig." }
         ];
 
-        let medData = { passenger: {}, primary: {}, secondary: {}, vitals: {} };
+        let currentMed = { loc:'', airway:'' };
 
-        // NAVIGATION
         function openApp(id) {
             document.querySelectorAll('.app-view').forEach(v => v.classList.remove('visible-app'));
             document.getElementById(id).classList.add('visible-app');
-            if(id === 'cocktail-app') filterRecipes();
+            if(id === 'cocktail-app') filter();
         }
 
-        // MEDICAL
         function backToSelection() {
             document.querySelectorAll('#medical-app section').forEach(s => s.classList.remove('visible'));
             document.getElementById('selection-menu').classList.add('visible');
@@ -521,64 +272,54 @@
             document.getElementById('med-back-btn').style.display = 'block';
         }
 
-        function selectSingleOption(cat, val) {
-            medData.primary[cat] = val;
-            const buttons = document.querySelectorAll(`button[name="${cat}"]`);
-            buttons.forEach(b => b.classList.remove('selected'));
-            event.target.classList.add('selected');
+        function sel(cat, val) {
+            currentMed[cat] = val;
+            document.querySelectorAll(`button[name="${cat}"]`).forEach(b => b.classList.toggle('selected', b.value === val));
         }
 
-        function submitAssessment(type) {
-            backToSelection();
+        function showSummary() {
+            const modal = document.getElementById('modal');
+            modal.innerHTML = `<h2>Summary</h2><p><b>Seat:</b> ${document.getElementById('seat').value || 'N/A'}</p><p><b>LOC:</b> ${currentMed.loc || 'N/A'}</p><p><b>Pulse:</b> ${document.getElementById('pulse').value || 'N/A'}</p><button class="btn-main" onclick="closeModal()">Close</button>`;
+            document.getElementById('overlay').style.display = 'block';
+            modal.style.display = 'block';
         }
 
-        function showMedicalSummary() {
-            const summary = document.getElementById('summary-content');
-            summary.innerHTML = '<ul class="summary-list"><li>Assessment data is stored locally.</li></ul>';
-            document.getElementById('modal-overlay').style.display = 'block';
-            document.getElementById('summary-modal').style.display = 'block';
+        function closeModal() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('modal').style.display = 'none';
         }
 
-        function updateAdditionalInfo() {}
-
-        // MIXOLOGY
-        let currentFilter = 'All';
-        function setFilter(type, el) {
-            currentFilter = type;
+        let filterType = 'All';
+        function setFilter(t, el) {
+            filterType = t;
             document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
             el.classList.add('active');
-            filterRecipes();
+            filter();
         }
 
-        function filterRecipes() {
-            const query = document.getElementById('search-input').value.toLowerCase();
+        function filter() {
+            const q = document.getElementById('search').value.toLowerCase();
             const grid = document.getElementById('recipe-grid');
             grid.innerHTML = '';
-            drinks.filter(d => (currentFilter === 'All' || d.type === currentFilter) && d.name.toLowerCase().includes(query)).forEach(d => {
-                grid.innerHTML += `<div class="recipe-card" onclick="openRecipe(${d.id})"><div class="recipe-emoji">${d.emoji}</div><div class="recipe-name">${d.name}</div><div class="recipe-type">${d.type}</div></div>`;
+            drinks.filter(d => (filterType === 'All' || d.type === filterType) && d.name.toLowerCase().includes(q)).forEach(d => {
+                grid.innerHTML += `<div class="recipe-card" onclick="openRecipe(${d.id})"><div class="recipe-emoji">${d.emoji}</div><div style="font-weight:700">${d.name}</div></div>`;
             });
         }
 
         function openRecipe(id) {
             const d = drinks.find(x => x.id === id);
-            document.getElementById('modal-emoji').innerText = d.emoji;
-            document.getElementById('modal-title').innerText = d.name;
-            document.getElementById('modal-glass').innerText = d.glass;
-            document.getElementById('modal-ice').innerText = d.ice;
-            document.getElementById('modal-ingredients').innerHTML = d.ingredients.map(i => `<li>${i}</li>`).join('');
-            document.getElementById('modal-steps').innerText = d.steps;
-            document.getElementById('modal-garnish').innerText = d.garnish;
-            document.getElementById('modal-overlay').style.display = 'block';
-            document.getElementById('recipe-modal').style.display = 'block';
+            const modal = document.getElementById('modal');
+            modal.innerHTML = `<h2>${d.name}</h2><p><b>Glass:</b> ${d.glass}</p><p><b>Ingredients:</b> ${d.ingredients.join(', ')}</p><p><b>Method:</b> ${d.steps}</p><button class="btn-main" onclick="closeModal()">Close</button>`;
+            document.getElementById('overlay').style.display = 'block';
+            modal.style.display = 'block';
         }
 
-        function closeAllModals() {
-            document.getElementById('modal-overlay').style.display = 'none';
-            document.querySelectorAll('.modal-box').forEach(m => m.style.display = 'none');
-        }
+        function downloadNotes() { alert("Data captured. Copy the summary to notes."); }
+        function clearData() { if(confirm("Clear log?")) location.reload(); }
 
-        function downloadNotes() {}
-        function clearAllData() { if(confirm("Clear all?")) location.reload(); }
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
     </script>
 </body>
 </html>
